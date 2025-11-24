@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>나는 몇 년생 감성인가? 🎵</title>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Noto Sans KR", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #667eea;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .question-container {
+        display: none;
+      }
+
+      .question-container.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .question-number {
+        font-size: 14px;
+        color: #999;
+        margin-bottom: 10px;
+      }
+
+      .question-text {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 25px;
+        line-height: 1.5;
+      }
+
+      .option {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .option:hover {
+        background: #e9ecef;
+        border-color: #667eea;
+        transform: translateX(5px);
+      }
+
+      .option.selected {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .result-container {
+        display: none;
+        text-align: center;
+      }
+
+      .result-container.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      .result-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+      }
+
+      .result-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #667eea;
+      }
+
+      .result-description {
+        font-size: 18px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+        color: #555;
+      }
+
+      .result-details {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .result-details li {
+        margin: 10px 0;
+        line-height: 1.6;
+      }
+
+      .result-tagline {
+        font-size: 16px;
+        font-weight: bold;
+        color: #667eea;
+        margin-top: 20px;
+        padding: 15px;
+        background: #f0f4ff;
+        border-radius: 10px;
+      }
+
+      .share-section {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #e9ecef;
+      }
+
+      .share-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .share-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .share-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .share-btn:hover {
+        background: #5568d3;
+        transform: scale(1.02);
+      }
+
+      .share-btn.instagram {
+        background: linear-gradient(
+          45deg,
+          #f09433 0%,
+          #e6683c 25%,
+          #dc2743 50%,
+          #cc2366 75%,
+          #bc1888 100%
+        );
+      }
+
+      .share-btn.kakao {
+        background: #fee500;
+        color: #000;
+      }
+
+      .share-btn.link {
+        background: #28a745;
+      }
+
+      .share-note {
+        font-size: 12px;
+        color: #999;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      .restart-btn {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+      }
+
+      .restart-btn:hover {
+        background: #5a6268;
+      }
+
+      #resultCanvas {
+        display: none;
+      }
+
+      .progress-bar {
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 2px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s;
+        width: 0%;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 30px 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .question-text {
+          font-size: 18px;
+        }
+
+        .option {
+          padding: 15px;
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎵 나는 몇 년생 감성인가? 🎵</h1>
+      <p class="subtitle">12가지 질문으로 알아보는 나의 감성 테스트</p>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- 질문 영역 (동적으로 렌더링됨) -->
+      <div id="questionsArea"></div>
+
+      <!-- 결과 영역 -->
+      <div class="result-container" id="resultArea">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-description" id="resultDescription"></div>
+        <div class="result-details" id="resultDetails"></div>
+        <div class="result-tagline" id="resultTagline"></div>
+
+        <div class="share-section">
+          <div class="share-title">📱 여러분도 테스트 해보세요! 👇</div>
+          <div class="share-buttons">
+            <button class="share-btn instagram" onclick="shareToInstagram()">
+              📸 인스타 스토리 공유
+            </button>
+            <button class="share-btn kakao" onclick="shareToKakao()">
+              💬 카카오톡 친구에게 보내기
+            </button>
+            <button class="share-btn link" onclick="copyLink()">
+              🔗 링크 복사하기
+            </button>
+          </div>
+          <p class="share-note">💡 결과 이미지 자동 생성됩니다</p>
+          <button class="restart-btn" onclick="restartTest()">
+            🔄 다시 테스트하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="resultCanvas" width="1080" height="1080"></canvas>
+
+    <script>
+      // Kakao SDK 초기화 (앱 키는 실제 사용 시 발급받아야 함)
+      // HTML 파일을 직접 열면 file:// 프로토콜이라 카카오 SDK가 작동하지 않을 수 있습니다
+      // GitHub Pages에 배포하면 정상 작동합니다
+      try {
+        if (typeof Kakao !== "undefined") {
+          // 실제 배포 시 발급받은 키로 변경 필요
+          // 카카오톡 공유를 사용하지 않으면 이 부분을 주석 처리해도 됩니다
+          Kakao.init("YOUR_KAKAO_APP_KEY");
+        }
+      } catch (e) {
+        console.log(
+          "카카오 SDK 로드 실패 (선택사항) - HTML 파일을 직접 열면 작동하지 않을 수 있습니다"
+        );
+      }
+
+      /* =========================
+         Dynamic Quiz Engine v1 - 벡터 가중치 방식
+         ========================= */
+
+      const questionData = [
+        {
+          q: "당신의 감성 BGM은 무엇에 더 가깝나요?",
+          options: [
+            {
+              t: "라디오·발라드로 추억 소환 (필름감성)",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "케이팝 명곡들로 설렘 저장(00s~초창기 아이돌)",
+              v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
+            },
+            {
+              t: "플레이리스트에 요즘 히트곡이 가득",
+              v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
+            },
+            {
+              t: "틱톡/릴스 트렌드 곡만 따라듣기",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "옷 고를 때 당신의 우선순위는?",
+          options: [
+            {
+              t: "추억을 떠올리게 하는 아이템(빈티지)",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "중고나라/장터에서 찾는 희귀템",
+              v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
+            },
+            {
+              t: "인플루언서 코디를 그대로 따라함",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 1 },
+            },
+            {
+              t: "편하고 기능적인 게 최고(편한게 이김)",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "오래된 사진을 보면 당신은?",
+          options: [
+            {
+              t: "바로 감성에 젖어 추억회상",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "추억은 즐기되 SNS에 올려 공유",
+              v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
+            },
+            {
+              t: "필터 보정해서 재업로드",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
+            },
+            {
+              t: "그냥 웃고 지나감(밈으로 변환 가능)",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "친구가 '너 진짜 몇 년생 같은데?' 라고 하면 당신 반응은?",
+          options: [
+            {
+              t: "'맞아… 그때가 좋았지' 한숨 섞어 인정",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "'아님 말고ㅋㅋ' 하며 장난으로 넘김",
+              v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
+            },
+            {
+              t: "'아니야 그건 좀 아니지' 단호 부정",
+              v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
+            },
+            {
+              t: "새 밈 소개하며 분위기 전환",
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "당신이 가장 먼저 열어보는 SNS는?",
+          options: [
+            {
+              t: "사진·글 위주(인스타 성향)",
+              v: { nineties: 1, zeros: 1, tens: 2, mz: 0 },
+            },
+            {
+              t: "메신저/카톡 알림(소통형)",
+              v: { nineties: 0, zeros: 2, tens: 1, mz: 1 },
+            },
+            {
+              t: "짧은 영상(틱톡/릴스) 무한 스크롤",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+            {
+              t: "게시판·포럼이나 오래된 커뮤니티 회상",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+          ],
+        },
+        {
+          q: "기분 안 좋을 때 당신의 치트 방법은?",
+          options: [
+            {
+              t: "추억의 노래 틀고 감성에 젖기",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "간식 사서 달달하게 위로",
+              v: { nineties: 0, zeros: 2, tens: 0, mz: 1 },
+            },
+            {
+              t: "웃긴 밈/짤 찾아서 웃음으로 전환",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+            {
+              t: "친구와 장황하게 통화하며 토로",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
+            },
+          ],
+        },
+        {
+          q: "유행에 대해 당신은?",
+          options: [
+            {
+              t: "'그건 내 세대 거' 라고 향수 느낌",
+              v: { nineties: 3, zeros: 1, tens: 0, mz: 0 },
+            },
+            {
+              t: "새로운 것 좋아하지만 골라 듣는 편",
+              v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
+            },
+            {
+              t: "유행은 빠르게 흡수한다",
+              v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
+            },
+            {
+              t: "유행을 만들어내는 쪽일 때가 많음",
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "[주의력체크] 지금 보이는 단어 중 좋아하는 걸 눌러주세요:",
+          options: [
+            { t: "옛날사진", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
+            { t: "프사", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
+            { t: "릴스", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
+            {
+              t: "지금은 테스트 집중 중",
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+            },
+          ],
+        },
+        {
+          q: "'추억팔이' 콘텐츠를 보면 당신은?",
+          options: [
+            {
+              t: "그 시절 생각나서 바로 감탄",
+              v: { nineties: 3, zeros: 1, tens: 0, mz: 0 },
+            },
+            {
+              t: "옛날도 좋지만 지금 것도 괜찮음",
+              v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
+            },
+            {
+              t: "밈으로 재해석해서 웃음 포인트로 소비",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+            {
+              t: "그냥 스크롤하다 말고 지나감",
+              v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
+            },
+          ],
+        },
+        {
+          q: "친구들과 모이면 당신의 역할은?",
+          options: [
+            {
+              t: "옛날 이야기로 분위기 조성하는 사람",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "먹을거·행사 섭외 담당(실용형)",
+              v: { nineties: 0, zeros: 2, tens: 0, mz: 1 },
+            },
+            {
+              t: "밈·짤로 모두 웃기는 사람",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+            {
+              t: "분위기 관찰 후 필요한 타이밍에 말하는 사람",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
+            },
+          ],
+        },
+        {
+          q: "만약 '타임머신'이 있다면 당신이 가장 가고 싶은 때는?",
+          options: [
+            {
+              t: "90년대 그 시절 감성 속으로",
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "2000년대 초반 추억의 거리",
+              v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
+            },
+            {
+              t: "2010년대 감성 페스티벌",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
+            },
+            {
+              t: "미래 트렌드 체크하러(요즘 느낌)",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
+            },
+          ],
+        },
+        {
+          q: "마지막으로: 친구가 이 테스트를 공유하면 당신 반응은?",
+          options: [
+            {
+              t: "바로 해본다(재미있음)",
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 1 },
+            },
+            {
+              t: "스크린샷 찍어서 감성 멘션",
+              v: { nineties: 2, zeros: 0, tens: 0, mz: 0 },
+            },
+            {
+              t: "링크 붙여서 친구 소환(도전 권유)",
+              v: { nineties: 0, zeros: 1, tens: 0, mz: 3 },
+            },
+            {
+              t: "넘기고 바로 다른 것 봄",
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 1 },
+            },
+          ],
+        },
+      ];
+
+      // utility: shuffle array
+      function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+      }
+
+      // DOM 요소
+      const questionsArea = document.getElementById("questionsArea");
+      const progressFill = document.getElementById("progressFill");
+      const resultArea = document.getElementById("resultArea");
+
+      let currentIndex = 0;
+      let answers = []; // store chosen option index per question
+      let accum = { nineties: 0, zeros: 0, tens: 0, mz: 0 };
+
+      // OPTIONAL: shuffle questions & options for variance
+      shuffle(questionData);
+      questionData.forEach((q) => shuffle(q.options));
+
+      function renderQuestion(idx) {
+        questionsArea.innerHTML = ""; // clear
+
+        const q = questionData[idx];
+        const container = document.createElement("div");
+        container.className = "question-container active";
+        container.dataset.question = idx;
+
+        const questionNumber = document.createElement("div");
+        questionNumber.className = "question-number";
+        questionNumber.textContent = `질문 ${idx + 1}/${questionData.length}`;
+
+        const questionText = document.createElement("div");
+        questionText.className = "question-text";
+        questionText.textContent = q.q;
+
+        container.appendChild(questionNumber);
+        container.appendChild(questionText);
+
+        q.options.forEach((opt, oi) => {
+          const div = document.createElement("div");
+          div.className = "option";
+          div.textContent = opt.t;
+          div.addEventListener("click", () => selectOption(idx, oi));
+          container.appendChild(div);
+        });
+
+        questionsArea.appendChild(container);
+        updateProgressUI(idx);
+      }
+
+      function selectOption(qIdx, optIdx) {
+        // mark answer
+        answers[qIdx] = optIdx;
+
+        // add weights
+        const v = questionData[qIdx].options[optIdx].v;
+        accum.nineties += v.nineties || 0;
+        accum.zeros += v.zeros || 0;
+        accum.tens += v.tens || 0;
+        accum.mz += v.mz || 0;
+
+        // visual feedback
+        const container = document.querySelector(".question-container.active");
+        const options = container.querySelectorAll(".option");
+        options.forEach((opt) => opt.classList.remove("selected"));
+        options[optIdx].classList.add("selected");
+
+        // move next after tiny delay for UX
+        setTimeout(() => {
+          if (qIdx < questionData.length - 1) {
+            renderQuestion(qIdx + 1);
+            currentIndex = qIdx + 1;
+          } else {
+            computeAndShowResult();
+          }
+        }, 350);
+      }
+
+      function updateProgressUI(idx) {
+        const progress = ((idx + 1) / questionData.length) * 100;
+        if (progressFill) progressFill.style.width = progress + "%";
+      }
+
+      function computeAndShowResult() {
+        // pick max vector value
+        const scores = [
+          { key: "nineties", v: accum.nineties },
+          { key: "zeros", v: accum.zeros },
+          { key: "tens", v: accum.tens },
+          { key: "mz", v: accum.mz },
+        ];
+
+        scores.sort((a, b) => b.v - a.v);
+        const top = scores[0];
+        const runnerUp = scores[1];
+
+        // confidence: gap between top and runnerUp
+        const gap = top.v - runnerUp.v;
+        const total = accum.nineties + accum.zeros + accum.tens + accum.mz;
+        const confidence = Math.round((gap / Math.max(1, total)) * 100);
+
+        let resultType = top.key;
+
+        // if gap very small, we can show "mixed" result
+        if (gap <= 2) {
+          resultType = "mixed";
+        }
+
+        // build result data mapping
+        const resultMap = {
+          nineties: {
+            icon: "🧡",
+            title: "90년대 감성",
+            description:
+              "당신의 감성은… 필름카메라와 싸이월드의 시대를 걷고 있습니다.",
+            details: [
+              "헐… 당신 <strong>추억 뿜뿜 감성 1티어</strong>",
+              "버즈/SG워너비 노래 나오면 바로 감정 몰입",
+              "감성샷은 무조건 <strong>따뜻한 노란 필터</strong>",
+              '종종 "요즘 애들…" 이라고 말함',
+            ],
+            tagline: '📌 당신과 찰떡인 말: "추억이 최고지…"',
+          },
+          zeros: {
+            icon: "💛",
+            title: "2000년대 감성",
+            description:
+              "당신은 00년대 학교 앞 떡볶이 냄새 맡으며 자란 감성입니다.",
+            details: [
+              '카톡 말투 "ㅋㅋㅋㅋ" 기반',
+              "싸이월드도 기억나는데 인스타도 잘함",
+              "새 폰 사면 프사 5분마다 바꿈",
+              "감성과 웃김 사이 아슬아슬한 균형형",
+            ],
+            tagline: '📌 당신의 인생 밈: "아님 말고 ㅋㅋ"',
+          },
+          tens: {
+            icon: "💙",
+            title: "2010년대 감성",
+            description:
+              "당신은 인스타 감성과 틱톡 세대의 중간지대에 있습니다.",
+            details: [
+              "인스타가 곧 일기장",
+              "스토리는 24시간마다 업데이트",
+              "밈 저장해두고 친구에게 바로 뿌림",
+              "감성샷도 찰칵, 밈도 찰칵 하는 혼종형",
+            ],
+            tagline: '📌 한 줄 요약: "나는 현타와 감성을 동시에 갖춘 사람"',
+          },
+          mz: {
+            icon: "💜",
+            title: "MZ 믹스 감성",
+            description: "당신은 유행에도 빠르고, 감성에도 빠른 하이브리드!",
+            details: [
+              "트렌드 습득 속도 최상위",
+              "틱톡에서 뭐 뜨면 바로 따라함",
+              "밈은 국룰",
+              "남 눈치 안 보고 자기 스타일대로 즐김",
+            ],
+            tagline: '📌 정체성: "그때그때 달라요"',
+          },
+          mixed: {
+            icon: "✨",
+            title: "믹스형 감성",
+            description: "여러 시대가 섞여 있는 유연한 감성입니다.",
+            details: [
+              "다양한 취향을 가진 소유자",
+              "상황에 따라 달라지는 감성",
+              "고정관념 없는 자유로운 스타일",
+              "모든 시대의 좋은 점을 섞어냄",
+            ],
+            tagline: '📌 당신의 특징: "유연하고 다양해요"',
+          },
+        };
+
+        const chosen = resultMap[resultType];
+
+        // populate result area
+        document.getElementById("resultIcon").textContent = chosen.icon;
+        document.getElementById("resultTitle").textContent = chosen.title;
+        document.getElementById("resultDescription").textContent =
+          chosen.description;
+
+        const detailsHtml =
+          "<ul>" +
+          chosen.details.map((d) => `<li>${d}</li>`).join("") +
+          "</ul>";
+        document.getElementById("resultDetails").innerHTML = detailsHtml;
+        document.getElementById(
+          "resultTagline"
+        ).innerHTML = `${chosen.tagline}<br><small style="color: #999; font-weight: normal;">신뢰도: ${confidence}% · 점수: N${accum.nineties} Z${accum.zeros} T${accum.tens} M${accum.mz}</small>`;
+
+        // hide questions area, show result area
+        questionsArea.style.display = "none";
+        resultArea.classList.add("active");
+
+        // store for share
+        window.currentResult = {
+          type: resultType,
+          data: chosen,
+          score: accum,
+          confidence: confidence,
+        };
+      }
+
+      function restartTest() {
+        // reset
+        questionsArea.style.display = "block";
+        resultArea.classList.remove("active");
+        currentIndex = 0;
+        answers = [];
+        accum = { nineties: 0, zeros: 0, tens: 0, mz: 0 };
+
+        // shuffle again for variance
+        shuffle(questionData);
+        questionData.forEach((q) => shuffle(q.options));
+
+        renderQuestion(0);
+      }
+
+      // start
+      renderQuestion(0);
+
+      // 결과 이미지 생성
+      function generateResultImage() {
+        return new Promise((resolve) => {
+          const canvas = document.getElementById("resultCanvas");
+          const ctx = canvas.getContext("2d");
+          const result = window.currentResult;
+
+          // 배경 그라데이션
+          const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+          if (result.type === "nineties" || result.type === "90s") {
+            gradient.addColorStop(0, "#ff9a56");
+            gradient.addColorStop(1, "#ff6a88");
+          } else if (result.type === "zeros" || result.type === "00s") {
+            gradient.addColorStop(0, "#fad961");
+            gradient.addColorStop(1, "#f76b1c");
+          } else if (result.type === "tens" || result.type === "10s") {
+            gradient.addColorStop(0, "#667eea");
+            gradient.addColorStop(1, "#764ba2");
+          } else if (result.type === "mixed") {
+            gradient.addColorStop(0, "#a8edea");
+            gradient.addColorStop(0.5, "#fed6e3");
+            gradient.addColorStop(1, "#fbc2eb");
+          } else {
+            gradient.addColorStop(0, "#a8edea");
+            gradient.addColorStop(1, "#fed6e3");
+          }
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, 1080, 1080);
+
+          // 상단 제목
+          ctx.fillStyle = "white";
+          ctx.font = "bold 72px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.textAlign = "center";
+          ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+          ctx.shadowBlur = 10;
+          ctx.fillText("나는", 540, 180);
+
+          // 메인 타이틀
+          ctx.font = "bold 96px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.fillText(result.data.title + "!", 540, 280);
+          ctx.shadowBlur = 0;
+
+          // 아이콘 (더 크게)
+          ctx.font = "200px Arial";
+          ctx.fillText(result.data.icon, 540, 480);
+
+          // 설명 텍스트 (줄바꿈 처리)
+          ctx.font = "48px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+          const description = result.data.description;
+          const maxWidth = 900;
+          const lineHeight = 70;
+          let y = 650;
+
+          // 텍스트 줄바꿈 (한글 처리)
+          const words = description.split("");
+          let line = "";
+          for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n];
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) {
+              ctx.fillText(line, 540, y);
+              line = words[n];
+              y += lineHeight;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, 540, y);
+
+          // 태그라인
+          ctx.font = "bold 56px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.fillStyle = "#FFD700";
+          ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+          ctx.shadowBlur = 5;
+          const tagline = result.data.tagline.replace(/📌.*?: /, "");
+          ctx.fillText(tagline, 540, 820);
+          ctx.shadowBlur = 0;
+
+          // 신뢰도 표시
+          if (result.confidence !== undefined) {
+            ctx.font =
+              "bold 48px -apple-system, BlinkMacSystemFont, sans-serif";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+            ctx.shadowBlur = 5;
+            ctx.fillText(`신뢰도: ${result.confidence}%`, 540, 890);
+            ctx.shadowBlur = 0;
+          }
+
+          // 하단 구분선
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(200, 950);
+          ctx.lineTo(880, 950);
+          ctx.stroke();
+
+          // 하단 링크
+          ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+          ctx.font = "bold 42px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.fillText("테스트 하러 가기 →", 540, 1000);
+          ctx.font = "36px -apple-system, BlinkMacSystemFont, sans-serif";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          const url = window.location.href
+            .replace("http://", "")
+            .replace("https://", "");
+          ctx.fillText(url, 540, 1040);
+
+          // 이미지 데이터 반환 (toDataURL 사용)
+          const dataUrl = canvas.toDataURL("image/png");
+          resolve(dataUrl);
+        });
+      }
+
+      // 인스타 스토리 공유
+      async function shareToInstagram() {
+        try {
+          if (!window.currentResult) {
+            alert("결과가 없습니다. 테스트를 완료해주세요.");
+            return;
+          }
+
+          const imageDataUrl = await generateResultImage();
+
+          // 모바일 Web Share API 시도
+          if (navigator.share && navigator.canShare) {
+            try {
+              // 이미지를 Blob으로 변환
+              const response = await fetch(imageDataUrl);
+              const blob = await response.blob();
+              const file = new File(
+                [blob],
+                `나는-${window.currentResult.data.title.replace(
+                  /\s/g,
+                  "-"
+                )}-감성.png`,
+                { type: "image/png" }
+              );
+
+              if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: `나는 ${window.currentResult.data.title}!`,
+                  text: "나도 테스트 해봐!",
+                });
+                return;
+              }
+            } catch (shareError) {
+              console.log("Web Share API 실패, 다운로드로 대체");
+            }
+          }
+
+          // 다운로드 방식 (데스크톱 및 폴백)
+          const link = document.createElement("a");
+          link.download = `나는-${window.currentResult.data.title.replace(
+            /\s/g,
+            "-"
+          )}-감성.png`;
+          link.href = imageDataUrl;
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+
+          setTimeout(() => {
+            document.body.removeChild(link);
+            alert(
+              "📸 이미지가 다운로드되었습니다!\n인스타 스토리에 업로드해주세요!"
+            );
+          }, 100);
+        } catch (error) {
+          console.error("이미지 생성 오류:", error);
+          alert("이미지 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+      }
+
+      // 카카오톡 공유
+      async function shareToKakao() {
+        const result = window.currentResult;
+        if (!result) {
+          alert("결과가 없습니다. 테스트를 완료해주세요.");
+          return;
+        }
+
+        const url = window.location.href;
+        const shareText = `나는 ${result.data.title}! 🎵\n\n${result.data.description}\n\n나도 테스트 해봐! 👇\n${url}`;
+
+        // 모바일 Web Share API 시도 (카카오톡 앱이 있으면 자동으로 열림)
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: `나는 ${result.data.title}!`,
+              text: shareText,
+              url: url,
+            });
+            return;
+          } catch (shareError) {
+            // 사용자가 취소하거나 실패한 경우
+            if (shareError.name !== "AbortError") {
+              console.log("Web Share API 실패, 링크 복사로 대체");
+            } else {
+              return; // 사용자가 취소한 경우
+            }
+          }
+        }
+
+        // 카카오 SDK가 있는 경우 시도
+        try {
+          if (typeof Kakao !== "undefined" && Kakao.isInitialized()) {
+            Kakao.Share.sendDefault({
+              objectType: "feed",
+              content: {
+                title: `나는 ${result.data.title}!`,
+                description: result.data.description + "\n\n나도 테스트 해봐!",
+                imageUrl: url,
+                link: {
+                  mobileWebUrl: url,
+                  webUrl: url,
+                },
+              },
+              buttons: [
+                {
+                  title: "테스트 하기",
+                  link: {
+                    mobileWebUrl: url,
+                    webUrl: url,
+                  },
+                },
+              ],
+            });
+            return;
+          }
+        } catch (kakaoError) {
+          console.log("카카오 SDK 공유 실패, 링크 복사로 대체");
+        }
+
+        // 폴백: 링크 복사
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(shareText);
+            alert("✅ 링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요!");
+          } catch (clipError) {
+            // 클립보드 실패 시 수동 복사
+            fallbackCopyText(shareText);
+          }
+        } else {
+          fallbackCopyText(shareText);
+        }
+      }
+
+      // 폴백 복사 함수
+      function fallbackCopyText(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          alert("✅ 링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요!");
+        } catch (err) {
+          alert(`링크를 수동으로 복사해주세요:\n\n${text}`);
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // 링크 복사
+      function copyLink() {
+        if (!window.currentResult) {
+          alert("결과가 없습니다. 테스트를 완료해주세요.");
+          return;
+        }
+
+        const url = window.location.href;
+        const text = `나는 ${window.currentResult.data.title}! 🎵\n\n나도 테스트 해봐! 👇\n${url}`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              alert("✅ 링크가 복사되었습니다!");
+            })
+            .catch(() => {
+              fallbackCopyText(text);
+            });
+        } else {
+          fallbackCopyText(text);
+        }
+      }
+    </script>
+  </body>
+</html>
