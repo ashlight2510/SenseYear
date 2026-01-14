@@ -1147,26 +1147,9 @@
       };
 
       const supportedLangs = ["ko", "en"];
-      const defaultLang = "en";
+      const defaultLang = "ko";
       let currentLang = defaultLang;
       const LANG_STORAGE_KEY = "senseyear_lang";
-
-      function getRegionPreferredLang(fallback = defaultLang) {
-        const intlLocale =
-          typeof Intl === "object" && typeof Intl.DateTimeFormat === "function"
-            ? Intl.DateTimeFormat().resolvedOptions().locale
-            : "";
-        const sources = [
-          ...(navigator.languages || []),
-          navigator.language,
-          navigator.userLanguage,
-          intlLocale,
-        ]
-          .filter(Boolean)
-          .map((locale) => locale.toLowerCase());
-        const hasKorean = sources.some((locale) => locale.startsWith("ko"));
-        return hasKorean ? "ko" : fallback;
-      }
 
       function localizeString(value) {
         if (!value) return "";
@@ -1191,9 +1174,23 @@
       function detectLang() {
         const url = new URL(window.location.href);
         const paramLang = url.searchParams.get("lang");
+        if (supportedLangs.includes(paramLang)) return paramLang;
         const stored = localStorage.getItem(LANG_STORAGE_KEY);
-        const candidate = paramLang || stored || getRegionPreferredLang(defaultLang);
-        return supportedLangs.includes(candidate) ? candidate : defaultLang;
+        if (supportedLangs.includes(stored)) return stored;
+        const intlLocale =
+          typeof Intl === "object" && typeof Intl.DateTimeFormat === "function"
+            ? Intl.DateTimeFormat().resolvedOptions().locale
+            : "";
+        const sources = [
+          ...(navigator.languages || []),
+          navigator.language,
+          navigator.userLanguage,
+          intlLocale,
+        ]
+          .filter(Boolean)
+          .map((locale) => locale.toLowerCase());
+        const hasKorean = sources.some((locale) => locale.startsWith("ko"));
+        return hasKorean ? "ko" : "en";
       }
 
       function updateMetaTags(lang) {
