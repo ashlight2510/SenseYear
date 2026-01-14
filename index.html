@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>나는 몇 년생 감성인가? 🎵</title>
+    <meta
+      name="description"
+      content="12가지 질문으로 알아보는 나의 감성 테스트"
+    />
+    <meta property="og:title" content="나는 몇 년생 감성인가? 🎵" />
+    <meta
+      property="og:description"
+      content="SNS에서 공유되는 재미있는 감성 테스트입니다!"
+    />
+    <meta property="twitter:title" content="나는 몇 년생 감성인가? 🎵" />
+    <meta
+      property="twitter:description"
+      content="12가지 질문으로 알아보는 나의 감성 테스트"
+    />
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%8E%B5%3C/text%3E%3C/svg%3E" />
     <link
       rel="apple-touch-icon"
@@ -379,10 +393,53 @@
         text-align: center;
 }
   </style>
+  <style>
+    .lang-switch {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: 999px;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      margin: 0 auto 14px;
+    }
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: rgba(248, 250, 252, 0.7);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .lang-switch button.active {
+      background: #f472b6;
+      color: #0b1120;
+    }
+    .share-hint {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
-  <body><div class="container">
-      <h1>🎵 나는 몇 년생 감성인가? 🎵</h1>
-      <p class="subtitle">12가지 질문으로 알아보는 나의 감성 테스트</p>
+  <body>
+    <div class="lang-switch" role="tablist" aria-label="Language switcher">
+      <button type="button" data-lang="ko" class="active">한국어</button>
+      <button type="button" data-lang="en">English</button>
+    </div>
+    <div class="container">
+      <h1 id="heroTitle" data-i18n="heroTitle">🎵 나는 몇 년생 감성인가? 🎵</h1>
+      <p class="subtitle" id="heroSubtitle" data-i18n="heroSubtitle">
+        12가지 질문으로 알아보는 나의 감성 테스트
+      </p>
+      <p class="share-hint" id="shareHint" data-i18n="shareHint">
+        🎧 아래 버튼으로 감성 결과를 공유해보세요.
+      </p>
 
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
@@ -400,20 +457,39 @@
         <div class="result-tagline" id="resultTagline"></div>
 
         <div class="share-section">
-          <div class="share-title">📱 여러분도 테스트 해보세요! 👇</div>
+          <div class="share-title" id="shareTitle" data-i18n="shareTitle">
+            📱 여러분도 테스트 해보세요! 👇
+          </div>
           <div class="share-buttons">
-            <button class="share-btn instagram" onclick="shareToInstagram()">
+            <button
+              class="share-btn instagram"
+              id="shareInstagramBtn"
+              data-i18n="shareInstagramButton"
+              onclick="shareToInstagram()"
+            >
               📸 인스타 스토리 공유
             </button>
-            <button class="share-btn kakao" onclick="shareToKakao()">
+            <button
+              class="share-btn kakao"
+              id="shareKakaoBtn"
+              data-i18n="shareKakaoButton"
+              onclick="shareToKakao()"
+            >
               💬 카카오톡 친구에게 보내기
             </button>
-            <button class="share-btn link" onclick="copyLink()">
+            <button
+              class="share-btn link"
+              id="shareLinkBtn"
+              data-i18n="shareLinkButton"
+              onclick="copyLink()"
+            >
               🔗 링크 복사하기
             </button>
           </div>
-          <p class="share-note">💡 결과 이미지 자동 생성됩니다</p>
-          <button class="restart-btn" onclick="restartTest()">
+          <p class="share-note" id="shareNote" data-i18n="shareNote">
+            💡 결과 이미지 자동 생성됩니다
+          </p>
+          <button class="restart-btn" id="restartBtn" data-i18n="restartButton" onclick="restartTest()">
             🔄 다시 테스트하기
           </button>
         </div>
@@ -453,249 +529,787 @@
 
       const questionData = [
         {
-          q: "당신의 감성 BGM은 무엇에 더 가깝나요?",
+          q: {
+            ko: "당신의 감성 BGM은 무엇에 더 가깝나요?",
+            en: "Which vibe best matches your personal soundtrack?",
+          },
           options: [
             {
-              t: "라디오·발라드로 추억 소환 (필름감성)",
+              t: {
+                ko: "라디오·발라드로 추억 소환 (필름감성)",
+                en: "Radio ballads that conjure nostalgia (film vibe)",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "케이팝 명곡들로 설렘 저장(00s~초창기 아이돌)",
+              t: {
+                ko: "케이팝 명곡들로 설렘 저장(00s~초창기 아이돌)",
+                en: "Saving up excitement with K-pop classics (early 00s idols)",
+              },
               v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
             },
             {
-              t: "플레이리스트에 요즘 히트곡이 가득",
+              t: {
+                ko: "플레이리스트에 요즘 히트곡이 가득",
+                en: "My playlist is full of today's hits",
+              },
               v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
             },
             {
-              t: "틱톡/릴스 트렌드 곡만 따라듣기",
+              t: {
+                ko: "틱톡/릴스 트렌드 곡만 따라듣기",
+                en: "Only following TikTok/Reels trends",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
           ],
         },
         {
-          q: "옷 고를 때 당신의 우선순위는?",
+          q: {
+            ko: "옷 고를 때 당신의 우선순위는?",
+            en: "What matters most when you pick clothes?",
+          },
           options: [
             {
-              t: "추억을 떠올리게 하는 아이템(빈티지)",
+              t: {
+                ko: "추억을 떠올리게 하는 아이템(빈티지)",
+                en: "Pieces that spark memories (vintage)",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "중고나라/장터에서 찾는 희귀템",
+              t: {
+                ko: "중고나라/장터에서 찾는 희귀템",
+                en: "Hunting rare finds on secondhand markets",
+              },
               v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
             },
             {
-              t: "인플루언서 코디를 그대로 따라함",
+              t: {
+                ko: "인플루언서 코디를 그대로 따라함",
+                en: "Copying influencer coordinates",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 1 },
             },
             {
-              t: "편하고 기능적인 게 최고(편한게 이김)",
+              t: {
+                ko: "편하고 기능적인 게 최고(편한게 이김)",
+                en: "Comfort and function win",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
           ],
         },
         {
-          q: "오래된 사진을 보면 당신은?",
+          q: {
+            ko: "오래된 사진을 보면 당신은?",
+            en: "When you see old photos, you...",
+          },
           options: [
             {
-              t: "바로 감성에 젖어 추억회상",
+              t: {
+                ko: "바로 감성에 젖어 추억회상",
+                en: "Immediately dive into nostalgia",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "추억은 즐기되 SNS에 올려 공유",
+              t: {
+                ko: "추억은 즐기되 SNS에 올려 공유",
+                en: "Enjoy the memory and share it on SNS",
+              },
               v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
             },
             {
-              t: "필터 보정해서 재업로드",
+              t: {
+                ko: "필터 보정해서 재업로드",
+                en: "Repost with fresh filters",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
             },
             {
-              t: "그냥 웃고 지나감(밈으로 변환 가능)",
+              t: {
+                ko: "그냥 웃고 지나감(밈으로 변환 가능)",
+                en: "Smile and move on (maybe turn it into a meme)",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
           ],
         },
         {
-          q: "친구가 '너 진짜 몇 년생 같은데?' 라고 하면 당신 반응은?",
+          q: {
+            ko: "친구가 '너 진짜 몇 년생 같은데?' 라고 하면 당신 반응은?",
+            en: "When friends say you feel like a certain generation, you...",
+          },
           options: [
             {
-              t: "'맞아… 그때가 좋았지' 한숨 섞어 인정",
+              t: {
+                ko: "'맞아… 그때가 좋았지' 한숨 섞어 인정",
+                en: "Agree with a sigh: 'Yeah... it was better back then'",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "'아님 말고ㅋㅋ' 하며 장난으로 넘김",
+              t: {
+                ko: "'아님 말고ㅋㅋ' 하며 장난으로 넘김",
+                en: "Brush it off jokingly: 'Whatever, lol'",
+              },
               v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
             },
             {
-              t: "'아니야 그건 좀 아니지' 단호 부정",
+              t: {
+                ko: "'아니야 그건 좀 아니지' 단호 부정",
+                en: "Firmly say, 'No, that's not me'",
+              },
               v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
             },
             {
-              t: "새 밈 소개하며 분위기 전환",
+              t: {
+                ko: "새 밈 소개하며 분위기 전환",
+                en: "Introduce a new meme to change the vibe",
+              },
               v: { nineties: 0, zeros: 0, tens: 0, mz: 3 },
             },
           ],
         },
         {
-          q: "당신이 가장 먼저 열어보는 SNS는?",
+          q: {
+            ko: "당신이 가장 먼저 열어보는 SNS는?",
+            en: "Which social app do you open first?",
+          },
           options: [
             {
-              t: "사진·글 위주(인스타 성향)",
+              t: {
+                ko: "사진·글 위주(인스타 성향)",
+                en: "Image/text-first (Instagram style)",
+              },
               v: { nineties: 1, zeros: 1, tens: 2, mz: 0 },
             },
             {
-              t: "메신저/카톡 알림(소통형)",
+              t: {
+                ko: "메신저/카톡 알림(소통형)",
+                en: "Messenger/Kakao notifications (social butterfly)",
+              },
               v: { nineties: 0, zeros: 2, tens: 1, mz: 1 },
             },
             {
-              t: "짧은 영상(틱톡/릴스) 무한 스크롤",
+              t: {
+                ko: "짧은 영상(틱톡/릴스) 무한 스크롤",
+                en: "Endless short-form videos (TikTok/Reels)",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
             {
-              t: "게시판·포럼이나 오래된 커뮤니티 회상",
+              t: {
+                ko: "게시판·포럼이나 오래된 커뮤니티 회상",
+                en: "Forums or old-school communities",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
           ],
         },
         {
-          q: "기분 안 좋을 때 당신의 치트 방법은?",
+          q: {
+            ko: "기분 안 좋을 때 당신의 치트 방법은?",
+            en: "Your go-to comfort when you feel down is...",
+          },
           options: [
             {
-              t: "추억의 노래 틀고 감성에 젖기",
+              t: {
+                ko: "추억의 노래 틀고 감성에 젖기",
+                en: "Play nostalgic songs and soak in the vibe",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "간식 사서 달달하게 위로",
+              t: {
+                ko: "간식 사서 달달하게 위로",
+                en: "Buy a treat and sweetly comfort yourself",
+              },
               v: { nineties: 0, zeros: 2, tens: 0, mz: 1 },
             },
             {
-              t: "웃긴 밈/짤 찾아서 웃음으로 전환",
+              t: {
+                ko: "웃긴 밈/짤 찾아서 웃음으로 전환",
+                en: "Find funny memes/gifs to laugh",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
             {
-              t: "친구와 장황하게 통화하며 토로",
+              t: {
+                ko: "친구와 장황하게 통화하며 토로",
+                en: "Talk it out with a long call",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
             },
           ],
         },
         {
-          q: "유행에 대해 당신은?",
+          q: {
+            ko: "유행에 대해 당신은?",
+            en: "What do you feel about trends?",
+          },
           options: [
             {
-              t: "'그건 내 세대 거' 라고 향수 느낌",
+              t: {
+                ko: "'그건 내 세대 거' 라고 향수 느낌",
+                en: "Say, 'That was my generation!' with nostalgia",
+              },
               v: { nineties: 3, zeros: 1, tens: 0, mz: 0 },
             },
             {
-              t: "새로운 것 좋아하지만 골라 듣는 편",
+              t: {
+                ko: "새로운 것 좋아하지만 골라 듣는 편",
+                en: "Like new stuff but pick selectively",
+              },
               v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
             },
             {
-              t: "유행은 빠르게 흡수한다",
+              t: {
+                ko: "유행은 빠르게 흡수한다",
+                en: "Absorb trends as soon as they hit",
+              },
               v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
             },
             {
-              t: "유행을 만들어내는 쪽일 때가 많음",
+              t: {
+                ko: "유행을 만들어내는 쪽일 때가 많음",
+                en: "Often the one creating the trend",
+              },
               v: { nineties: 0, zeros: 0, tens: 0, mz: 3 },
             },
           ],
         },
         {
-          q: "[주의력체크] 지금 보이는 단어 중 좋아하는 걸 눌러주세요:",
+          q: {
+            ko: "[주의력체크] 지금 보이는 단어 중 좋아하는 걸 눌러주세요:",
+            en: "Attention check: pick the word you like",
+          },
           options: [
-            { t: "옛날사진", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
-            { t: "프사", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
-            { t: "릴스", v: { nineties: 0, zeros: 0, tens: 0, mz: 1 } },
             {
-              t: "지금은 테스트 집중 중",
+              t: { ko: "옛날사진", en: "Old photo" },
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+            },
+            {
+              t: { ko: "프사", en: "Profile pic" },
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+            },
+            {
+              t: { ko: "릴스", en: "Reels" },
+              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+            },
+            {
+              t: {
+                ko: "지금은 테스트 집중 중",
+                en: "Focused on the quiz right now",
+              },
               v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
             },
           ],
         },
         {
-          q: "'추억팔이' 콘텐츠를 보면 당신은?",
+          q: {
+            ko: "'추억팔이' 콘텐츠를 보면 당신은?",
+            en: "When you see 'nostalgia farming' content, you...",
+          },
           options: [
             {
-              t: "그 시절 생각나서 바로 감탄",
+              t: {
+                ko: "그 시절 생각나서 바로 감탄",
+                en: "Gush, 'Oh that hits my era!'",
+              },
               v: { nineties: 3, zeros: 1, tens: 0, mz: 0 },
             },
             {
-              t: "옛날도 좋지만 지금 것도 괜찮음",
+              t: {
+                ko: "옛날도 좋지만 지금 것도 괜찮음",
+                en: "Appreciate the past, but the present is fine too",
+              },
               v: { nineties: 0, zeros: 2, tens: 1, mz: 0 },
             },
             {
-              t: "밈으로 재해석해서 웃음 포인트로 소비",
+              t: {
+                ko: "밈으로 재해석해서 웃음 포인트로 소비",
+                en: "Reinterpret it as a meme",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
             {
-              t: "그냥 스크롤하다 말고 지나감",
+              t: {
+                ko: "그냥 스크롤하다 말고 지나감",
+                en: "Just scroll past",
+              },
               v: { nineties: 0, zeros: 0, tens: 2, mz: 1 },
             },
           ],
         },
         {
-          q: "친구들과 모이면 당신의 역할은?",
+          q: {
+            ko: "친구들과 모이면 당신의 역할은?",
+            en: "When you're with friends, you usually...",
+          },
           options: [
             {
-              t: "옛날 이야기로 분위기 조성하는 사람",
+              t: {
+                ko: "옛날 이야기로 분위기 조성하는 사람",
+                en: "Set the mood with old stories",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "먹을거·행사 섭외 담당(실용형)",
+              t: {
+                ko: "먹을거·행사 섭외 담당(실용형)",
+                en: "Handle snacks/events (practical type)",
+              },
               v: { nineties: 0, zeros: 2, tens: 0, mz: 1 },
             },
             {
-              t: "밈·짤로 모두 웃기는 사람",
+              t: {
+                ko: "밈·짤로 모두 웃기는 사람",
+                en: "Make everyone laugh with memes",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
             {
-              t: "분위기 관찰 후 필요한 타이밍에 말하는 사람",
+              t: {
+                ko: "분위기 관찰 후 필요한 타이밍에 말하는 사람",
+                en: "Observe vibes and speak at the right moment",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
             },
           ],
         },
         {
-          q: "만약 '타임머신'이 있다면 당신이 가장 가고 싶은 때는?",
+          q: {
+            ko: "만약 '타임머신'이 있다면 당신이 가장 가고 싶은 때는?",
+            en: "If you had a time machine, you would go to...",
+          },
           options: [
             {
-              t: "90년대 그 시절 감성 속으로",
+              t: {
+                ko: "90년대 그 시절 감성 속으로",
+                en: "The 90s nostalgia era",
+              },
               v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "2000년대 초반 추억의 거리",
+              t: {
+                ko: "2000년대 초반 추억의 거리",
+                en: "Early 2000s streets of memories",
+              },
               v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
             },
             {
-              t: "2010년대 감성 페스티벌",
+              t: {
+                ko: "2010년대 감성 페스티벌",
+                en: "2010s vibe festival",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
             },
             {
-              t: "미래 트렌드 체크하러(요즘 느낌)",
+              t: {
+                ko: "미래 트렌드 체크하러(요즘 느낌)",
+                en: "Check out future trends",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
           ],
         },
         {
-          q: "마지막으로: 친구가 이 테스트를 공유하면 당신 반응은?",
+          q: {
+            ko: "마지막으로: 친구가 이 테스트를 공유하면 당신 반응은?",
+            en: "Finally: when a friend shares this quiz, you...",
+          },
           options: [
             {
-              t: "바로 해본다(재미있음)",
+              t: {
+                ko: "바로 해본다(재미있음)",
+                en: "Jump in right away (sounds fun)",
+              },
               v: { nineties: 0, zeros: 1, tens: 2, mz: 1 },
             },
             {
-              t: "스크린샷 찍어서 감성 멘션",
+              t: {
+                ko: "스크린샷 찍어서 감성 멘션",
+                en: "Screenshot and mention the vibe",
+              },
               v: { nineties: 2, zeros: 0, tens: 0, mz: 0 },
             },
             {
-              t: "링크 붙여서 친구 소환(도전 권유)",
+              t: {
+                ko: "링크 붙여서 친구 소환(도전 권유)",
+                en: "Send the link and invite friends",
+              },
               v: { nineties: 0, zeros: 1, tens: 0, mz: 3 },
             },
             {
-              t: "넘기고 바로 다른 것 봄",
+              t: {
+                ko: "넘기고 바로 다른 것 봄",
+                en: "Skip it and move on",
+              },
               v: { nineties: 0, zeros: 0, tens: 1, mz: 1 },
             },
           ],
         },
       ];
+
+      const resultTemplates = {
+        nineties: {
+          icon: "🧡",
+          title: { ko: "90년대 감성", en: "90s Vibe" },
+          description: {
+            ko: "당신의 감성은… 필름카메라와 싸이월드의 시대를 걷고 있습니다.",
+            en: "Your vibe walks through the era of film cameras and Cyworld.",
+          },
+          details: {
+            ko: [
+              "헐… 당신 <strong>추억 뿜뿜 감성 1티어</strong>",
+              "버즈/SG워너비 노래 나오면 바로 감정 몰입",
+              "감성샷은 무조건 <strong>따뜻한 노란 필터</strong>",
+              '종종 "요즘 애들…" 이라고 말함',
+            ],
+            en: [
+              "You're top-tier nostalgia energy.",
+              "Buzz/SG Wannabe tracks pull you in instantly.",
+              "Every mood shot needs a warm yellow filter.",
+              'You occasionally say, "Kids these days..."',
+            ],
+          },
+          tagline: {
+            ko: '📌 당신과 찰떡인 말: "추억이 최고지…" ',
+            en: '📌 Tagline: "Nostalgia is the best..."',
+          },
+        },
+        zeros: {
+          icon: "💛",
+          title: { ko: "2000년대 감성", en: "2000s Vibe" },
+          description: {
+            ko: "당신은 00년대 학교 앞 떡볶이 냄새 맡으며 자란 감성입니다.",
+            en: "You grew up with the smell of tteokbokki by the school gate.",
+          },
+          details: {
+            ko: [
+              '카톡 말투 "ㅋㅋㅋㅋ" 기반',
+              "싸이월드도 기억나는데 인스타도 잘함",
+              "새 폰 사면 프사 5분마다 바꿈",
+              "감성과 웃김 사이 아슬아슬한 균형형",
+            ],
+            en: [
+              'Your KakaoTalk tone is all "kkkkkk."',
+              "You remember Cyworld but shine on Instagram too.",
+              "New phone? You refresh your profile every five minutes.",
+              "Balancing nostalgia and humor.",
+            ],
+          },
+          tagline: { ko: '📌 당신의 인생 밈: "아님 말고 ㅋㅋ"', en: '📌 Life meme: "Or not, lol"' },
+        },
+        tens: {
+          icon: "💙",
+          title: { ko: "2010년대 감성", en: "2010s Vibe" },
+          description: {
+            ko: "당신은 인스타 감성과 틱톡 세대의 중간지대에 있습니다.",
+            en: "You're standing between Instagram aesthetics and the TikTok generation.",
+          },
+          details: {
+            ko: [
+              "인스타가 곧 일기장",
+              "스토리는 24시간마다 업데이트",
+              "밈 저장해두고 친구에게 바로 뿌림",
+              "감성샷도 찰칵, 밈도 찰칵 하는 혼종형",
+            ],
+            en: [
+              "Instagram is basically your diary.",
+              "Stories update every 24 hours.",
+              "Save a meme and share it immediately.",
+              "Capture both aesthetic shots and memes.",
+            ],
+          },
+          tagline: {
+            ko: '📌 한 줄 요약: "나는 현타와 감성을 동시에 갖춘 사람"',
+            en: '📌 Summary: "I balance reality-checks and vibes."',
+          },
+        },
+        mz: {
+          icon: "💜",
+          title: { ko: "MZ 믹스 감성", en: "MZ Hybrid Vibe" },
+          description: {
+            ko: "당신은 유행에도 빠르고, 감성에도 빠른 하이브리드!",
+            en: "You're a hybrid who grabs trends fast and feels vibe even faster.",
+          },
+          details: {
+            ko: [
+              "트렌드 습득 속도 최상위",
+              "틱톡에서 뭐 뜨면 바로 따라함",
+              "밈은 국룰",
+              "남 눈치 안 보고 자기 스타일대로 즐김",
+            ],
+            en: [
+              "Top speed at picking up trends.",
+              "Copy whatever's trending on TikTok.",
+              "Memes are rule number one.",
+              "Enjoy your style without caring about the crowd.",
+            ],
+          },
+          tagline: {
+            ko: '📌 정체성: "그때그때 달라요"',
+            en: '📌 Identity: "It depends on the moment."',
+          },
+        },
+        mixed: {
+          icon: "✨",
+          title: { ko: "믹스형 감성", en: "Blended Vibe" },
+          description: {
+            ko: "여러 시대가 섞여 있는 유연한 감성입니다.",
+            en: "A flexible vibe mixing many eras.",
+          },
+          details: {
+            ko: [
+              "다양한 취향을 가진 소유자",
+              "상황에 따라 달라지는 감성",
+              "고정관념 없는 자유로운 스타일",
+              "모든 시대의 좋은 점을 섞어냄",
+            ],
+            en: [
+              "Owner of diverse tastes.",
+              "Your vibe shifts per moment.",
+              "Style without fixed notions.",
+              "Mixes the best from every era.",
+            ],
+          },
+          tagline: {
+            ko: '📌 당신의 특징: "유연하고 다양해요"',
+            en: '📌 You are versatile and open-minded.',
+          },
+        },
+      };
+
+      const translations = {
+        ko: {
+          metaTitle: "나는 몇 년생 감성인가? 🎵",
+          metaDescription: "SNS에서 공유되는 재미있는 감성 테스트입니다!",
+          heroTitle: "🎵 나는 몇 년생 감성인가? 🎵",
+          heroSubtitle: "12가지 질문으로 알아보는 나의 감성 테스트",
+          shareHint: "🎧 아래 버튼으로 감성 결과를 공유해보세요.",
+          shareTitle: "📱 여러분도 테스트 해보세요! 👇",
+          shareInstagramButton: "📸 인스타 스토리 공유",
+          shareKakaoButton: "💬 카카오톡 친구에게 보내기",
+          shareLinkButton: "🔗 링크 복사하기",
+          shareNote: "💡 결과 이미지 자동 생성됩니다",
+          restartButton: "🔄 다시 테스트하기",
+          questionLabel: "질문 {current}/{total}",
+          resultConfidenceLine:
+            "신뢰도: {confidence}% · 점수: N{nineties} Z{zeros} T{tens} M{mz}",
+          alertNoResult: "결과가 없습니다. 테스트를 완료해주세요.",
+          alertImageDownloaded:
+            "📸 이미지가 다운로드되었습니다!\n인스타 스토리에 업로드해주세요!",
+          alertImageError:
+            "이미지 생성 중 오류가 발생했습니다. 다시 시도해주세요.",
+          alertCopySuccess:
+            "✅ 링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요!",
+          alertCopyFail: "링크를 수동으로 복사해주세요:\n\n{text}",
+          alertCopyLinkSuccess: "✅ 링크가 복사되었습니다!",
+          shareBody:
+            "나는 {title}! 🎵\n\n{description}\n\n나도 테스트 해봐! 👇\n{url}",
+          shareKakaoButtonTitle: "테스트 하기",
+          resultImagePrefix: "나는",
+          resultImageCallToAction: "테스트 하러 가기 →",
+          moreTestsButton: "더 많은 테스트 해보기",
+        },
+        en: {
+          metaTitle: "What Year Is My Vibe? 🎵",
+          metaDescription: "A fun vibe quiz to share on SNS.",
+          heroTitle: "🎵 What Year Is My Vibe? 🎵",
+          heroSubtitle: "12 questions to discover your vibe.",
+          shareHint: "Use the buttons below to share your results.",
+          shareTitle: "📱 Share your vibe! 👇",
+          shareInstagramButton: "📸 Share to Instagram Story",
+          shareKakaoButton: "💬 Send via KakaoTalk",
+          shareLinkButton: "🔗 Copy link",
+          shareNote: "💡 Image auto-generated for you",
+          restartButton: "🔄 Try again",
+          questionLabel: "Question {current}/{total}",
+          resultConfidenceLine:
+            "Confidence: {confidence}% · Score: N{nineties} Z{zeros} T{tens} M{mz}",
+          alertNoResult: "No result yet. Finish the quiz first.",
+          alertImageDownloaded:
+            "📸 Image downloaded! Share it on your story.",
+          alertImageError: "Image generation failed. Please try again.",
+          alertCopySuccess: "✅ Link copied! Paste it into KakaoTalk!",
+          alertCopyFail: "Please copy the link manually:\n\n{text}",
+          alertCopyLinkSuccess: "✅ Link copied!",
+          shareBody:
+            "I'm {title}! 🎵\n\n{description}\n\nTry it out! 👇\n{url}",
+          shareKakaoButtonTitle: "Try the quiz",
+          resultImagePrefix: "I'm",
+          resultImageCallToAction: "Take the quiz →",
+          moreTestsButton: "Try more quizzes",
+        },
+      };
+
+      const supportedLangs = ["ko", "en"];
+      const defaultLang = "en";
+      let currentLang = defaultLang;
+      const LANG_STORAGE_KEY = "senseyear_lang";
+
+      function getRegionPreferredLang(fallback = defaultLang) {
+        const intlLocale =
+          typeof Intl === "object" && typeof Intl.DateTimeFormat === "function"
+            ? Intl.DateTimeFormat().resolvedOptions().locale
+            : "";
+        const sources = [
+          ...(navigator.languages || []),
+          navigator.language,
+          navigator.userLanguage,
+          intlLocale,
+        ]
+          .filter(Boolean)
+          .map((locale) => locale.toLowerCase());
+        const hasKorean = sources.some((locale) => locale.startsWith("ko"));
+        return hasKorean ? "ko" : fallback;
+      }
+
+      function localizeString(value) {
+        if (!value) return "";
+        if (typeof value === "string") return value;
+        return value[currentLang] ?? value.ko ?? "";
+      }
+
+      function localizeArray(value) {
+        if (!value) return [];
+        return value[currentLang] ?? value.ko ?? [];
+      }
+
+      function t(key, vars = {}) {
+        const langMap = translations[currentLang] || translations.ko;
+        let template = langMap[key] || translations.ko[key] || key;
+        if (typeof template !== "string") return template;
+        return template.replace(/\{(\w+)\}/g, (_, name) =>
+          vars[name] !== undefined ? vars[name] : ""
+        );
+      }
+
+      function detectLang() {
+        const url = new URL(window.location.href);
+        const paramLang = url.searchParams.get("lang");
+        const stored = localStorage.getItem(LANG_STORAGE_KEY);
+        const candidate = paramLang || stored || getRegionPreferredLang(defaultLang);
+        return supportedLangs.includes(candidate) ? candidate : defaultLang;
+      }
+
+      function updateMetaTags(lang) {
+        const meta = translations[lang] || translations.ko;
+        if (meta) {
+          document.title = meta.metaTitle;
+          const setMeta = (selector, value) => {
+            const el = document.querySelector(selector);
+            if (el) el.setAttribute("content", value);
+          };
+          setMeta('meta[name="description"]', meta.metaDescription);
+          setMeta('meta[property="og:title"]', meta.metaTitle);
+          setMeta('meta[property="og:description"]', meta.metaDescription);
+          setMeta('meta[property="twitter:title"]', meta.metaTitle);
+          setMeta('meta[property="twitter:description"]', meta.metaDescription);
+        }
+      }
+
+      function updateStaticText() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (key) {
+            el.textContent = t(key);
+          }
+        });
+      }
+
+      function updateLangButtons(lang) {
+        document.querySelectorAll(".lang-switch button").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === lang);
+        });
+      }
+
+      function updateQuestionTexts() {
+        const containers = document.querySelectorAll(".question-container");
+        containers.forEach((container) => {
+          const idx = Number(container.dataset.question);
+          const question = questionData[idx];
+          if (!question) return;
+          const numberEl = container.querySelector(".question-number");
+          if (numberEl) {
+            numberEl.textContent = t("questionLabel", {
+              current: idx + 1,
+              total: questionData.length,
+            });
+          }
+          const textEl = container.querySelector(".question-text");
+          if (textEl) {
+            textEl.textContent = localizeString(question.q);
+          }
+          const options = container.querySelectorAll(".option");
+          options.forEach((optEl, oi) => {
+            const optionData = question.options[oi];
+            if (optionData) {
+              optEl.textContent = localizeString(optionData.t);
+            }
+          });
+        });
+      }
+
+      function updateResultDisplay() {
+        if (!window.currentResult) return;
+        const template = window.currentResult.template;
+        if (!template) return;
+        document.getElementById("resultIcon").textContent = template.icon;
+        document.getElementById("resultTitle").textContent = localizeString(
+          template.title
+        );
+        document.getElementById("resultDescription").textContent =
+          localizeString(template.description);
+        const details = localizeArray(template.details);
+        const detailsHtml =
+          "<ul>" + details.map((d) => `<li>${d}</li>`).join("") + "</ul>";
+        document.getElementById("resultDetails").innerHTML = detailsHtml;
+        document.getElementById("resultTagline").innerHTML = `${localizeString(
+          template.tagline
+        )}<br><small style="color: #999; font-weight: normal;">${t(
+          "resultConfidenceLine",
+          {
+            confidence: window.currentResult.confidence ?? 0,
+            nineties: window.currentResult.score.nineties,
+            zeros: window.currentResult.score.zeros,
+            tens: window.currentResult.score.tens,
+            mz: window.currentResult.score.mz,
+          }
+        )}</small>`;
+      }
+
+      function applyTranslations(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        updateMetaTags(lang);
+        updateStaticText();
+        updateQuestionTexts();
+        updateResultDisplay();
+        updateLangButtons(lang);
+      }
+
+      function setLang(lang, { persist = true, updateUrl = true } = {}) {
+        const next = supportedLangs.includes(lang) ? lang : defaultLang;
+        if (persist) {
+          localStorage.setItem(LANG_STORAGE_KEY, next);
+        }
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("lang", next);
+          window.history.replaceState({}, "", url.toString());
+        }
+        applyTranslations(next);
+      }
+
+      document.querySelectorAll(".lang-switch button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setLang(btn.dataset.lang, { persist: true, updateUrl: true });
+        });
+      });
 
       // utility: shuffle array
       function shuffle(a) {
@@ -728,11 +1342,14 @@
 
         const questionNumber = document.createElement("div");
         questionNumber.className = "question-number";
-        questionNumber.textContent = `질문 ${idx + 1}/${questionData.length}`;
+        questionNumber.textContent = t("questionLabel", {
+          current: idx + 1,
+          total: questionData.length,
+        });
 
         const questionText = document.createElement("div");
         questionText.className = "question-text";
-        questionText.textContent = q.q;
+        questionText.textContent = localizeString(q.q);
 
         container.appendChild(questionNumber);
         container.appendChild(questionText);
@@ -740,7 +1357,9 @@
         q.options.forEach((opt, oi) => {
           const div = document.createElement("div");
           div.className = "option";
-          div.textContent = opt.t;
+          div.textContent = localizeString(opt.t);
+          div.dataset.questionIndex = idx;
+          div.dataset.optionIndex = oi;
           div.addEventListener("click", () => selectOption(idx, oi));
           container.appendChild(div);
         });
@@ -808,100 +1427,28 @@
         }
 
         // build result data mapping
-        const resultMap = {
-          nineties: {
-            icon: "🧡",
-            title: "90년대 감성",
-            description:
-              "당신의 감성은… 필름카메라와 싸이월드의 시대를 걷고 있습니다.",
-            details: [
-              "헐… 당신 <strong>추억 뿜뿜 감성 1티어</strong>",
-              "버즈/SG워너비 노래 나오면 바로 감정 몰입",
-              "감성샷은 무조건 <strong>따뜻한 노란 필터</strong>",
-              '종종 "요즘 애들…" 이라고 말함',
-            ],
-            tagline: '📌 당신과 찰떡인 말: "추억이 최고지…"',
-          },
-          zeros: {
-            icon: "💛",
-            title: "2000년대 감성",
-            description:
-              "당신은 00년대 학교 앞 떡볶이 냄새 맡으며 자란 감성입니다.",
-            details: [
-              '카톡 말투 "ㅋㅋㅋㅋ" 기반',
-              "싸이월드도 기억나는데 인스타도 잘함",
-              "새 폰 사면 프사 5분마다 바꿈",
-              "감성과 웃김 사이 아슬아슬한 균형형",
-            ],
-            tagline: '📌 당신의 인생 밈: "아님 말고 ㅋㅋ"',
-          },
-          tens: {
-            icon: "💙",
-            title: "2010년대 감성",
-            description:
-              "당신은 인스타 감성과 틱톡 세대의 중간지대에 있습니다.",
-            details: [
-              "인스타가 곧 일기장",
-              "스토리는 24시간마다 업데이트",
-              "밈 저장해두고 친구에게 바로 뿌림",
-              "감성샷도 찰칵, 밈도 찰칵 하는 혼종형",
-            ],
-            tagline: '📌 한 줄 요약: "나는 현타와 감성을 동시에 갖춘 사람"',
-          },
-          mz: {
-            icon: "💜",
-            title: "MZ 믹스 감성",
-            description: "당신은 유행에도 빠르고, 감성에도 빠른 하이브리드!",
-            details: [
-              "트렌드 습득 속도 최상위",
-              "틱톡에서 뭐 뜨면 바로 따라함",
-              "밈은 국룰",
-              "남 눈치 안 보고 자기 스타일대로 즐김",
-            ],
-            tagline: '📌 정체성: "그때그때 달라요"',
-          },
-          mixed: {
-            icon: "✨",
-            title: "믹스형 감성",
-            description: "여러 시대가 섞여 있는 유연한 감성입니다.",
-            details: [
-              "다양한 취향을 가진 소유자",
-              "상황에 따라 달라지는 감성",
-              "고정관념 없는 자유로운 스타일",
-              "모든 시대의 좋은 점을 섞어냄",
-            ],
-            tagline: '📌 당신의 특징: "유연하고 다양해요"',
-          },
+        const resultTemplate = resultTemplates[resultType];
+        if (!resultTemplate) return;
+
+        const scoreSnapshot = {
+          nineties: accum.nineties,
+          zeros: accum.zeros,
+          tens: accum.tens,
+          mz: accum.mz,
         };
 
-        const chosen = resultMap[resultType];
-
-        // populate result area
-        document.getElementById("resultIcon").textContent = chosen.icon;
-        document.getElementById("resultTitle").textContent = chosen.title;
-        document.getElementById("resultDescription").textContent =
-          chosen.description;
-
-        const detailsHtml =
-          "<ul>" +
-          chosen.details.map((d) => `<li>${d}</li>`).join("") +
-          "</ul>";
-        document.getElementById("resultDetails").innerHTML = detailsHtml;
-        document.getElementById(
-          "resultTagline"
-        ).innerHTML = `${chosen.tagline}<br><small style="color: #999; font-weight: normal;">신뢰도: ${confidence}% · 점수: N${accum.nineties} Z${accum.zeros} T${accum.tens} M${accum.mz}</small>`;
+        window.currentResult = {
+          type: resultType,
+          template: resultTemplate,
+          score: scoreSnapshot,
+          confidence,
+        };
 
         // hide questions area, show result area
         questionsArea.style.display = "none";
         resultArea.classList.add("active");
 
-        // store for share
-        window.currentResult = {
-          type: resultType,
-          data: chosen,
-          score: accum,
-          confidence: confidence,
-        };
+        updateResultDisplay();
       }
 
       function restartTest() {
@@ -921,6 +1468,7 @@
 
       // start
       renderQuestion(0);
+      setLang(detectLang(), { persist: true, updateUrl: false });
 
       // 결과 이미지 생성
       function generateResultImage() {
@@ -952,26 +1500,33 @@
           ctx.fillRect(0, 0, 1080, 1080);
 
           // 상단 제목
+          if (!result || !result.template) {
+            throw new Error("No result to render");
+          }
+          const localizedTitle = localizeString(result.template.title);
+          const localizedDescription = localizeString(result.template.description);
+          const localizedTagline = localizeString(result.template.tagline);
+
           ctx.fillStyle = "white";
           ctx.font = "bold 72px -apple-system, BlinkMacSystemFont, sans-serif";
           ctx.textAlign = "center";
           ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
           ctx.shadowBlur = 10;
-          ctx.fillText("나는", 540, 180);
+          ctx.fillText(t("resultImagePrefix"), 540, 180);
 
           // 메인 타이틀
           ctx.font = "bold 96px -apple-system, BlinkMacSystemFont, sans-serif";
-          ctx.fillText(result.data.title + "!", 540, 280);
+          ctx.fillText(`${localizedTitle}!`, 540, 280);
           ctx.shadowBlur = 0;
 
           // 아이콘 (더 크게)
           ctx.font = "200px Arial";
-          ctx.fillText(result.data.icon, 540, 480);
+          ctx.fillText(result.template.icon, 540, 480);
 
           // 설명 텍스트 (줄바꿈 처리)
           ctx.font = "48px -apple-system, BlinkMacSystemFont, sans-serif";
           ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-          const description = result.data.description;
+          const description = localizedDescription;
           const maxWidth = 900;
           const lineHeight = 70;
           let y = 650;
@@ -997,7 +1552,7 @@
           ctx.fillStyle = "#FFD700";
           ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
           ctx.shadowBlur = 5;
-          const tagline = result.data.tagline.replace(/📌.*?: /, "");
+          const tagline = localizedTagline.replace(/📌.*?:\s*/, "");
           ctx.fillText(tagline, 540, 820);
           ctx.shadowBlur = 0;
 
@@ -1008,7 +1563,17 @@
             ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
             ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
             ctx.shadowBlur = 5;
-            ctx.fillText(`신뢰도: ${result.confidence}%`, 540, 890);
+            ctx.fillText(
+              t("resultConfidenceLine", {
+                confidence: result.confidence,
+                nineties: result.score.nineties,
+                zeros: result.score.zeros,
+                tens: result.score.tens,
+                mz: result.score.mz,
+              }),
+              540,
+              890
+            );
             ctx.shadowBlur = 0;
           }
 
@@ -1023,7 +1588,7 @@
           // 하단 링크
           ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
           ctx.font = "bold 42px -apple-system, BlinkMacSystemFont, sans-serif";
-          ctx.fillText("테스트 하러 가기 →", 540, 1000);
+          ctx.fillText(t("resultImageCallToAction"), 540, 1000);
           ctx.font = "36px -apple-system, BlinkMacSystemFont, sans-serif";
           ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
           const url = window.location.href
@@ -1041,11 +1606,20 @@
       async function shareToInstagram() {
         try {
           if (!window.currentResult) {
-            alert("결과가 없습니다. 테스트를 완료해주세요.");
+            alert(t("alertNoResult"));
             return;
           }
 
           const imageDataUrl = await generateResultImage();
+          const url = window.location.href;
+          const result = window.currentResult;
+          const localizedTitle = localizeString(result.template.title);
+          const localizedDescription = localizeString(result.template.description);
+          const shareText = t("shareBody", {
+            title: localizedTitle,
+            description: localizedDescription,
+            url,
+          });
 
           // 모바일 Web Share API 시도
           if (navigator.share && navigator.canShare) {
@@ -1053,20 +1627,16 @@
               // 이미지를 Blob으로 변환
               const response = await fetch(imageDataUrl);
               const blob = await response.blob();
-              const file = new File(
-                [blob],
-                `나는-${window.currentResult.data.title.replace(
-                  /\s/g,
-                  "-"
-                )}-감성.png`,
-                { type: "image/png" }
-              );
+              const filename = `${localizedTitle
+                .replace(/\s+/g, "-")
+                .toLowerCase()}-vibe.png`;
+              const file = new File([blob], filename, { type: "image/png" });
 
               if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
                   files: [file],
-                  title: `나는 ${window.currentResult.data.title}!`,
-                  text: "나도 테스트 해봐!",
+                  title: localizedTitle,
+                  text: shareText,
                 });
                 return;
               }
@@ -1077,10 +1647,9 @@
 
           // 다운로드 방식 (데스크톱 및 폴백)
           const link = document.createElement("a");
-          link.download = `나는-${window.currentResult.data.title.replace(
-            /\s/g,
-            "-"
-          )}-감성.png`;
+          link.download = `${localizedTitle
+            .replace(/\s+/g, "-")
+            .toLowerCase()}-vibe.png`;
           link.href = imageDataUrl;
           link.style.display = "none";
           document.body.appendChild(link);
@@ -1088,13 +1657,11 @@
 
           setTimeout(() => {
             document.body.removeChild(link);
-            alert(
-              "📸 이미지가 다운로드되었습니다!\n인스타 스토리에 업로드해주세요!"
-            );
+            alert(t("alertImageDownloaded"));
           }, 100);
         } catch (error) {
           console.error("이미지 생성 오류:", error);
-          alert("이미지 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
+          alert(t("alertImageError"));
         }
       }
 
@@ -1102,18 +1669,24 @@
       async function shareToKakao() {
         const result = window.currentResult;
         if (!result) {
-          alert("결과가 없습니다. 테스트를 완료해주세요.");
+          alert(t("alertNoResult"));
           return;
         }
 
         const url = window.location.href;
-        const shareText = `나는 ${result.data.title}! 🎵\n\n${result.data.description}\n\n나도 테스트 해봐! 👇\n${url}`;
+        const localizedTitle = localizeString(result.template.title);
+        const localizedDescription = localizeString(result.template.description);
+        const shareText = t("shareBody", {
+          title: localizedTitle,
+          description: localizedDescription,
+          url,
+        });
 
         // 모바일 Web Share API 시도 (카카오톡 앱이 있으면 자동으로 열림)
         if (navigator.share) {
           try {
             await navigator.share({
-              title: `나는 ${result.data.title}!`,
+              title: localizedTitle,
               text: shareText,
               url: url,
             });
@@ -1134,8 +1707,12 @@
             Kakao.Share.sendDefault({
               objectType: "feed",
               content: {
-                title: `나는 ${result.data.title}!`,
-                description: result.data.description + "\n\n나도 테스트 해봐!",
+                title: localizedTitle,
+                description: `${localizedDescription}\n\n${t("shareBody", {
+                  title: localizedTitle,
+                  description: localizedDescription,
+                  url,
+                })}`,
                 imageUrl: url,
                 link: {
                   mobileWebUrl: url,
@@ -1144,7 +1721,7 @@
               },
               buttons: [
                 {
-                  title: "테스트 하기",
+                  title: t("shareKakaoButtonTitle"),
                   link: {
                     mobileWebUrl: url,
                     webUrl: url,
@@ -1162,7 +1739,7 @@
         if (navigator.clipboard && navigator.clipboard.writeText) {
           try {
             await navigator.clipboard.writeText(shareText);
-            alert("✅ 링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요!");
+            alert(t("alertCopySuccess"));
           } catch (clipError) {
             // 클립보드 실패 시 수동 복사
             fallbackCopyText(shareText);
@@ -1183,9 +1760,9 @@
         textarea.select();
         try {
           document.execCommand("copy");
-          alert("✅ 링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요!");
+          alert(t("alertCopySuccess"));
         } catch (err) {
-          alert(`링크를 수동으로 복사해주세요:\n\n${text}`);
+          alert(t("alertCopyFail", { text }));
         }
         document.body.removeChild(textarea);
       }
@@ -1193,18 +1770,26 @@
       // 링크 복사
       function copyLink() {
         if (!window.currentResult) {
-          alert("결과가 없습니다. 테스트를 완료해주세요.");
+          alert(t("alertNoResult"));
           return;
         }
 
         const url = window.location.href;
-        const text = `나는 ${window.currentResult.data.title}! 🎵\n\n나도 테스트 해봐! 👇\n${url}`;
+        const localizedTitle = localizeString(window.currentResult.template.title);
+        const localizedDescription = localizeString(
+          window.currentResult.template.description
+        );
+        const text = t("shareBody", {
+          title: localizedTitle,
+          description: localizedDescription,
+          url,
+        });
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard
             .writeText(text)
             .then(() => {
-              alert("✅ 링크가 복사되었습니다!");
+              alert(t("alertCopyLinkSuccess"));
             })
             .catch(() => {
               fallbackCopyText(text);
@@ -1226,13 +1811,17 @@
           moreBtn.id = 'more-tests-btn';
           moreBtn.type = 'button';
           moreBtn.dataset.url = targetUrl;
-          moreBtn.textContent = '더 많은 테스트 해보기';
+          moreBtn.dataset.i18n = 'moreTestsButton';
+          moreBtn.textContent = t("moreTestsButton");
           moreBtn.className = 'more-tests-btn';
           moreBtn.addEventListener('click', function () {
             window.open(targetUrl, '_blank', 'noopener');
           });
           if (document.body) {
             document.body.appendChild(moreBtn);
+          }
+          if (typeof applyTranslations === 'function') {
+            applyTranslations();
           }
         }
         if (document.readyState === 'loading') {
