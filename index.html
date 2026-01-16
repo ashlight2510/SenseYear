@@ -139,21 +139,48 @@
         padding: 18px 20px;
         margin-bottom: 12px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 16px;
         line-height: 1.5;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .option::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+      }
+
+      .option:hover::before {
+        left: 100%;
       }
 
       .option:hover {
         background: #e9ecef;
         border-color: #667eea;
-        transform: translateX(5px);
+        transform: translateX(5px) scale(1.02);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
       }
 
       .option.selected {
-        background: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-color: #667eea;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        animation: pulse 0.3s ease;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1.05); }
       }
 
       .result-container {
@@ -782,28 +809,37 @@
         },
         {
           q: {
-            ko: "[주의력체크] 지금 보이는 단어 중 좋아하는 걸 눌러주세요:",
-            en: "Attention check: pick the word you like",
+            ko: "휴대폰을 처음 가졌을 때의 기억은?",
+            en: "What do you remember about your first phone?",
           },
           options: [
             {
-              t: { ko: "옛날사진", en: "Old photo" },
-              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
-            },
-            {
-              t: { ko: "프사", en: "Profile pic" },
-              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
-            },
-            {
-              t: { ko: "릴스", en: "Reels" },
-              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+              t: {
+                ko: "무선전화기나 삐삐 시절부터 기억함",
+                en: "Remember pagers and cordless phones",
+              },
+              v: { nineties: 3, zeros: 0, tens: 0, mz: 0 },
             },
             {
               t: {
-                ko: "지금은 테스트 집중 중",
-                en: "Focused on the quiz right now",
+                ko: "초기 피처폰(폴더폰, 슬라이드폰)이 첫 추억",
+                en: "Early feature phones (flip, slide) are my first memory",
               },
-              v: { nineties: 0, zeros: 0, tens: 0, mz: 1 },
+              v: { nineties: 1, zeros: 2, tens: 0, mz: 0 },
+            },
+            {
+              t: {
+                ko: "스마트폰이 처음 나왔을 때의 설렘",
+                en: "The excitement when smartphones first came out",
+              },
+              v: { nineties: 0, zeros: 1, tens: 2, mz: 0 },
+            },
+            {
+              t: {
+                ko: "태어날 때부터 스마트폰이 당연했음",
+                en: "Smartphones were always a given",
+              },
+              v: { nineties: 0, zeros: 0, tens: 1, mz: 3 },
             },
           ],
         },
@@ -958,8 +994,8 @@
           icon: "🧡",
           title: { ko: "90년대 감성", en: "90s Vibe" },
           description: {
-            ko: "당신의 감성은… 필름카메라와 싸이월드의 시대를 걷고 있습니다.",
-            en: "Your vibe walks through the era of film cameras and Cyworld.",
+            ko: "당신의 감성은… 필름카메라와 싸이월드의 시대를 걷고 있습니다. 추억이 곧 힐링인 당신은 옛날 노래 한 곡에 눈물 흘릴 수 있는 진정한 감성파입니다.",
+            en: "Your vibe walks through the era of film cameras and Cyworld. For you, memories are healing—you're the type who can cry to one old song, a true sentimentalist.",
           },
           details: {
             ko: [
@@ -967,25 +1003,31 @@
               "버즈/SG워너비 노래 나오면 바로 감정 몰입",
               "감성샷은 무조건 <strong>따뜻한 노란 필터</strong>",
               '종종 "요즘 애들…" 이라고 말함',
+              "옛날 사진 보면 30분은 추억에 빠짐",
+              "라디오에서 옛날 노래 나오면 운전 중에도 감동",
+              "빈티지 아이템 수집이 취미",
             ],
             en: [
               "You're top-tier nostalgia energy.",
               "Buzz/SG Wannabe tracks pull you in instantly.",
               "Every mood shot needs a warm yellow filter.",
               'You occasionally say, "Kids these days..."',
+              "Old photos trap you in memories for 30+ minutes",
+              "Nostalgic radio songs move you even while driving",
+              "Collecting vintage items is your hobby",
             ],
           },
           tagline: {
-            ko: '📌 당신과 찰떡인 말: "추억이 최고지…" ',
-            en: '📌 Tagline: "Nostalgia is the best..."',
+            ko: '📌 당신과 찰떡인 말: "추억이 최고지… 그때가 좋았어" ',
+            en: '📌 Tagline: "Nostalgia is the best... those were the days"',
           },
         },
         zeros: {
           icon: "💛",
           title: { ko: "2000년대 감성", en: "2000s Vibe" },
           description: {
-            ko: "당신은 00년대 학교 앞 떡볶이 냄새 맡으며 자란 감성입니다.",
-            en: "You grew up with the smell of tteokbokki by the school gate.",
+            ko: "당신은 00년대 학교 앞 떡볶이 냄새 맡으며 자란 감성입니다. 싸이월드와 인스타그램을 모두 경험한 세대답게, 추억도 즐기고 트렌드도 놓치지 않는 밸런스 감성의 소유자입니다.",
+            en: "You grew up with the smell of tteokbokki by the school gate. Having experienced both Cyworld and Instagram, you're a balanced vibe owner who enjoys memories while keeping up with trends.",
           },
           details: {
             ko: [
@@ -993,22 +1035,28 @@
               "싸이월드도 기억나는데 인스타도 잘함",
               "새 폰 사면 프사 5분마다 바꿈",
               "감성과 웃김 사이 아슬아슬한 균형형",
+              "옛날 노래도 좋아하지만 신곡도 빠르게 흡수",
+              "빈티지와 트렌디를 동시에 추구",
+              "추억 콘텐츠 보면 '아 맞다!' 하며 공감",
             ],
             en: [
               'Your KakaoTalk tone is all "kkkkkk."',
               "You remember Cyworld but shine on Instagram too.",
               "New phone? You refresh your profile every five minutes.",
               "Balancing nostalgia and humor.",
+              "Love old songs but quickly absorb new hits",
+              "Pursue both vintage and trendy",
+              "See nostalgia content and go 'Oh yeah!'",
             ],
           },
-          tagline: { ko: '📌 당신의 인생 밈: "아님 말고 ㅋㅋ"', en: '📌 Life meme: "Or not, lol"' },
+          tagline: { ko: '📌 당신의 인생 밈: "아님 말고 ㅋㅋ 근데 맞긴 해"', en: '📌 Life meme: "Or not, lol but it\'s true"' },
         },
         tens: {
           icon: "💙",
           title: { ko: "2010년대 감성", en: "2010s Vibe" },
           description: {
-            ko: "당신은 인스타 감성과 틱톡 세대의 중간지대에 있습니다.",
-            en: "You're standing between Instagram aesthetics and the TikTok generation.",
+            ko: "당신은 인스타 감성과 틱톡 세대의 중간지대에 있습니다. 감성도 좋아하고 밈도 좋아하는, 현타와 감성을 동시에 갖춘 세대의 대표주자입니다.",
+            en: "You're standing between Instagram aesthetics and the TikTok generation. You love both vibes and memes—the perfect representative of a generation that balances reality checks with sentimentality.",
           },
           details: {
             ko: [
@@ -1016,25 +1064,31 @@
               "스토리는 24시간마다 업데이트",
               "밈 저장해두고 친구에게 바로 뿌림",
               "감성샷도 찰칵, 밈도 찰칵 하는 혼종형",
+              "추억 콘텐츠도 밈으로 재해석하는 능력자",
+              "필터는 감성과 웃김 사이 어딘가",
+              "옛날 것도 좋지만 새 것도 빠르게 따라감",
             ],
             en: [
               "Instagram is basically your diary.",
               "Stories update every 24 hours.",
               "Save a meme and share it immediately.",
               "Capture both aesthetic shots and memes.",
+              "Master at reinterpreting nostalgia as memes",
+              "Filters somewhere between sentimental and funny",
+              "Love old things but quickly follow new trends",
             ],
           },
           tagline: {
-            ko: '📌 한 줄 요약: "나는 현타와 감성을 동시에 갖춘 사람"',
-            en: '📌 Summary: "I balance reality-checks and vibes."',
+            ko: '📌 한 줄 요약: "나는 현타와 감성을 동시에 갖춘 사람. 그리고 밈도 좋아해"',
+            en: '📌 Summary: "I balance reality-checks and vibes. And I love memes."',
           },
         },
         mz: {
           icon: "💜",
           title: { ko: "MZ 믹스 감성", en: "MZ Hybrid Vibe" },
           description: {
-            ko: "당신은 유행에도 빠르고, 감성에도 빠른 하이브리드!",
-            en: "You're a hybrid who grabs trends fast and feels vibe even faster.",
+            ko: "당신은 유행에도 빠르고, 감성에도 빠른 하이브리드! 트렌드를 만들어가고, 밈을 만들어가며, 자기만의 스타일로 세상을 즐기는 진정한 MZ세대입니다.",
+            en: "You're a hybrid who grabs trends fast and feels vibe even faster! You create trends, make memes, and enjoy the world in your own style—a true MZ generation member.",
           },
           details: {
             ko: [
@@ -1042,25 +1096,31 @@
               "틱톡에서 뭐 뜨면 바로 따라함",
               "밈은 국룰",
               "남 눈치 안 보고 자기 스타일대로 즐김",
+              "새로운 앱이나 기능 발견하면 즉시 테스트",
+              "옛날 것도 밈으로 재해석해서 즐김",
+              "유행을 따라가는 게 아니라 만드는 쪽",
             ],
             en: [
               "Top speed at picking up trends.",
               "Copy whatever's trending on TikTok.",
               "Memes are rule number one.",
               "Enjoy your style without caring about the crowd.",
+              "Test new apps or features immediately",
+              "Reinterpret old things as memes for fun",
+              "Not following trends, but creating them",
             ],
           },
           tagline: {
-            ko: '📌 정체성: "그때그때 달라요"',
-            en: '📌 Identity: "It depends on the moment."',
+            ko: '📌 정체성: "그때그때 달라요. 근데 항상 재밌어요"',
+            en: '📌 Identity: "It depends on the moment. But it\'s always fun."',
           },
         },
         mixed: {
           icon: "✨",
           title: { ko: "믹스형 감성", en: "Blended Vibe" },
           description: {
-            ko: "여러 시대가 섞여 있는 유연한 감성입니다.",
-            en: "A flexible vibe mixing many eras.",
+            ko: "여러 시대가 섞여 있는 유연한 감성입니다. 90년대 추억도 좋아하고, 2000년대 감성도 이해하며, 2010년대 트렌드도 따라가고, MZ 밈도 즐기는 진정한 올라운더입니다.",
+            en: "A flexible vibe mixing many eras. You love 90s nostalgia, understand 2000s vibes, follow 2010s trends, and enjoy MZ memes—a true all-rounder.",
           },
           details: {
             ko: [
@@ -1068,17 +1128,23 @@
               "상황에 따라 달라지는 감성",
               "고정관념 없는 자유로운 스타일",
               "모든 시대의 좋은 점을 섞어냄",
+              "옛날 노래도 좋아하고 신곡도 좋아함",
+              "감성 콘텐츠도 좋고 밈 콘텐츠도 좋음",
+              "세대 구분 없이 모든 것을 즐김",
             ],
             en: [
               "Owner of diverse tastes.",
               "Your vibe shifts per moment.",
               "Style without fixed notions.",
               "Mixes the best from every era.",
+              "Love both old songs and new hits",
+              "Enjoy both sentimental and meme content",
+              "Enjoy everything regardless of generation",
             ],
           },
           tagline: {
-            ko: '📌 당신의 특징: "유연하고 다양해요"',
-            en: '📌 You are versatile and open-minded.',
+            ko: '📌 당신의 특징: "유연하고 다양해요. 그리고 모든 게 재밌어요"',
+            en: '📌 You are versatile and open-minded. And everything is fun.',
           },
         },
       };
@@ -1330,6 +1396,8 @@
         const container = document.createElement("div");
         container.className = "question-container active";
         container.dataset.question = idx;
+        container.style.opacity = "0";
+        container.style.transform = "translateY(10px)";
 
         const questionNumber = document.createElement("div");
         questionNumber.className = "question-number";
@@ -1357,6 +1425,13 @@
 
         questionsArea.appendChild(container);
         updateProgressUI(idx);
+        
+        // Fade in animation
+        setTimeout(() => {
+          container.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+          container.style.opacity = "1";
+          container.style.transform = "translateY(0)";
+        }, 50);
       }
 
       function selectOption(qIdx, optIdx) {
@@ -1376,15 +1451,32 @@
         options.forEach((opt) => opt.classList.remove("selected"));
         options[optIdx].classList.add("selected");
 
-        // move next after tiny delay for UX
+        // move next after tiny delay for UX with smooth transition
         setTimeout(() => {
           if (qIdx < questionData.length - 1) {
-            renderQuestion(qIdx + 1);
-            currentIndex = qIdx + 1;
+            // Fade out current question
+            const currentContainer = document.querySelector(".question-container.active");
+            if (currentContainer) {
+              currentContainer.style.opacity = "0";
+              currentContainer.style.transform = "translateY(-10px)";
+            }
+            // Render next question after fade
+            setTimeout(() => {
+              renderQuestion(qIdx + 1);
+              currentIndex = qIdx + 1;
+            }, 200);
           } else {
-            computeAndShowResult();
+            // Final question - show result with delay
+            const currentContainer = document.querySelector(".question-container.active");
+            if (currentContainer) {
+              currentContainer.style.opacity = "0";
+              currentContainer.style.transform = "translateY(-10px)";
+            }
+            setTimeout(() => {
+              computeAndShowResult();
+            }, 300);
           }
-        }, 350);
+        }, 500);
       }
 
       function updateProgressUI(idx) {
@@ -1404,17 +1496,27 @@
         scores.sort((a, b) => b.v - a.v);
         const top = scores[0];
         const runnerUp = scores[1];
+        const third = scores[2];
 
-        // confidence: gap between top and runnerUp
-        const gap = top.v - runnerUp.v;
+        // Improved confidence calculation
         const total = accum.nineties + accum.zeros + accum.tens + accum.mz;
-        const confidence = Math.round((gap / Math.max(1, total)) * 100);
+        const topPercentage = (top.v / Math.max(1, total)) * 100;
+        const gap = top.v - runnerUp.v;
+        const gapPercentage = (gap / Math.max(1, total)) * 100;
+        
+        // Confidence considers both top score dominance and gap
+        let confidence = Math.round(
+          (topPercentage * 0.6) + (gapPercentage * 0.4)
+        );
+        confidence = Math.min(95, Math.max(45, confidence)); // Clamp between 45-95%
 
         let resultType = top.key;
 
-        // if gap very small, we can show "mixed" result
-        if (gap <= 2) {
+        // Improved mixed result logic: if gap is small OR top score is low
+        if (gap <= 2 || topPercentage < 35) {
           resultType = "mixed";
+          // Adjust confidence for mixed results
+          confidence = Math.round(confidence * 0.85);
         }
 
         // build result data mapping
